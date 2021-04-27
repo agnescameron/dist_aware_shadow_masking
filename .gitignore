@@ -3,4 +3,4 @@ Output/
 ckpt/
 resnext/
 __pycache__/
-
+.DS_Store

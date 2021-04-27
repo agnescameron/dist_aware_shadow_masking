@@ -72,9 +72,7 @@ def crf_refine(img, annos):
     bw[bw < 128] = 0    # Black
     bw[bw >= 128] = 255 # White
 
-    Image.fromarray(bw).show()
     maskImg = img*bw[:,:,None]
     maskImg = ImageOps.invert(Image.fromarray(maskImg.astype('uint8')))
-    maskImg.show()
 
     return maskImg
