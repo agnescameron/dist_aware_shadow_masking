@@ -3,7 +3,7 @@ import os
 from PIL import Image, ImageOps
 
 import pydensecrf.densecrf as dcrf
-
+import cv2
 
 class AvgMeter(object):
     def __init__(self):
@@ -66,13 +66,17 @@ def crf_refine(img, annos):
     res = res * 255
     res = res.reshape(img.shape[:2])
 
-    bw = np.asarray(res).copy()
+    bw = np.asarray(res).copy().astype('uint8')
+
 
     # Pixel range is 0...255, 256/2 = 128
     bw[bw < 128] = 0    # Black
     bw[bw >= 128] = 255 # White
 
-    maskImg = img*bw[:,:,None]
-    maskImg = ImageOps.invert(Image.fromarray(maskImg.astype('uint8')))
+    col_mask = cv2.bitwise_and(img, img, mask=bw)
+    bgr_mask = np.where(col_mask < 10, 255, col_mask)
 
-    return maskImg
+    # maskImg = img*bw[:,:,None]
+    # maskImg = ImageOps.invert(Image.fromarray(maskImg.astype('uint8')))
+
+    return bgr_mask
